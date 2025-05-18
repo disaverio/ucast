@@ -58,7 +58,7 @@ class UcastExpressionTest {
         )
 
         val json = objectMapper.writeValueAsString(compoundExpression)
-        assertEquals("""{"type":"compound","operator":"and","value":[{"type":"field","field":"age","operator":"gte","value":18.0},{"type":"field","field":"active","operator":"eq","value":true}],"type":"compound"}""", json)
+        assertEquals("""{"type":"compound","operator":"and","value":[{"type":"field","field":"age","operator":"gte","value":18.0},{"type":"field","field":"active","operator":"eq","value":true}]}""", json)
 
         val deserializedExpression = objectMapper.readValue(json, UcastExpression::class.java)
 
@@ -118,7 +118,7 @@ class UcastExpressionTest {
         )
 
         val json = objectMapper.writeValueAsString(finalExpression)
-        assertEquals("""{"type":"compound","operator":"and","value":[{"type":"compound","operator":"or","value":[{"type":"field","field":"username","operator":"contains","value":"admin"},{"type":"field","field":"role","operator":"in","value":["ADMIN","SUPER_ADMIN"]}],"type":"compound"},{"type":"field","field":"active","operator":"eq","value":true},{"type":"field","field":"lastLoginDays","operator":"lt","value":30.0}],"type":"compound"}""", json)
+        assertEquals("""{"type":"compound","operator":"and","value":[{"type":"compound","operator":"or","value":[{"type":"field","field":"username","operator":"contains","value":"admin"},{"type":"field","field":"role","operator":"in","value":["ADMIN","SUPER_ADMIN"]}]},{"type":"field","field":"active","operator":"eq","value":true},{"type":"field","field":"lastLoginDays","operator":"lt","value":30.0}]}""", json)
 
         val deserializedExpression = objectMapper.readValue(json, UcastExpression::class.java)
 

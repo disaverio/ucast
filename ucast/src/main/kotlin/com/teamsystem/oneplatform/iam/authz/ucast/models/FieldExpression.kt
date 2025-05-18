@@ -7,6 +7,7 @@ data class FieldExpression @JsonCreator constructor(
     @JsonProperty("operator") val operator: FieldOperator,
     @JsonProperty("value") val value: FieldValue
 ) : UcastExpression() {
+
     @get:JsonIgnore
     override val type = "field"
 

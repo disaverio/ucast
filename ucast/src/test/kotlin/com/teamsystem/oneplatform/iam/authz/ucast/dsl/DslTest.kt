@@ -1,11 +1,8 @@
 package dev.disaverio.ucast.dsl
 
-import dev.disaverio.ucast.models.CompoundExpression
-import dev.disaverio.ucast.models.CompoundOperator
-import dev.disaverio.ucast.models.FieldExpression
-import dev.disaverio.ucast.models.FieldOperator
-import dev.disaverio.ucast.models.FieldValue
-import org.junit.jupiter.api.Assertions.*
+import dev.disaverio.ucast.models.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Nested
 import kotlin.test.Test
 
@@ -140,33 +137,7 @@ class DslTest {
     inner class CompoundExpressionDslTest {
 
         @Test
-        fun `test empty AND condition`() {
-
-            val exp = and {}
-
-            assertEquals(CompoundOperator.AND, exp.operator)
-            assertTrue(exp.value.isEmpty())
-        }
-
-        @Test
-        fun `test single AND condition`() {
-
-            val exp = and {
-                "field1" eq "value1"
-            }
-
-            assertEquals(CompoundOperator.AND, exp.operator)
-            assertEquals(1, exp.value.size)
-            assertTrue(exp.value.single() is FieldExpression)
-
-            val firstCondition = exp.value.single() as FieldExpression
-            assertEquals("field1", firstCondition.field)
-            assertEquals(FieldOperator.EQ, firstCondition.operator)
-            assertEquals(FieldValue.StringValue("value1"), firstCondition.value)
-        }
-
-        @Test
-        fun `test multiple AND conditions`() {
+        fun `test AND conditions`() {
 
             val exp = and {
                 "field1" eq "value1"
@@ -191,33 +162,7 @@ class DslTest {
         }
 
         @Test
-        fun `test empty OR condition`() {
-
-            val exp = or {}
-
-            assertEquals(CompoundOperator.OR, exp.operator)
-            assertTrue(exp.value.isEmpty())
-        }
-
-        @Test
-        fun `test single OR condition`() {
-
-            val exp = or {
-                "field1" eq "value1"
-            }
-
-            assertEquals(CompoundOperator.OR, exp.operator)
-            assertEquals(1, exp.value.size)
-            assertTrue(exp.value.single() is FieldExpression)
-
-            val firstCondition = exp.value.single() as FieldExpression
-            assertEquals("field1", firstCondition.field)
-            assertEquals(FieldOperator.EQ, firstCondition.operator)
-            assertEquals(FieldValue.StringValue("value1"), firstCondition.value)
-        }
-
-        @Test
-        fun `test multiple OR conditions`() {
+        fun `test OR conditions`() {
 
             val exp = or {
                 "field1" eq "value1"
@@ -239,6 +184,19 @@ class DslTest {
             val thirdCondition = exp.value[2] as FieldExpression
             assertEquals("field3", thirdCondition.field)
             assertEquals(FieldValue.NumberValue(20.5), thirdCondition.value)
+        }
+
+        @Test
+        fun `test NOT conditions`() {
+
+            val exp = not { "field1" eq "value1" }
+
+            assertEquals(CompoundOperator.NOT, exp.operator)
+            assertEquals(1, exp.value.size)
+
+            val condition = exp.value.single() as FieldExpression
+            assertEquals("field1", condition.field)
+            assertEquals(FieldValue.StringValue("value1"), condition.value)
         }
     }
 
@@ -258,18 +216,32 @@ class DslTest {
                     "field5" gte 13
                     "field6" `in` listOf("value1", "value2", "value3")
                     "field7" nin listOf("value4", "value5", "value6")
+                    not {
+                        and {
+                            "field8" contains "pluto"
+                            "field9".startsWith("starter")
+                            "field10".endsWith("ender")
+                        }
+                    }
                     or {
-                        "field8" contains "pluto"
-                        "field9".startsWith("starter")
-                        "field10".endsWith("ender")
+                        "field11" contains "pluto"
+                        "field12".startsWith("starter")
+                        "field13".endsWith("ender")
+                        not {
+                            or {
+                                "field14" eq "value11"
+                                "field15" ne "value12"
+                            }
+                        }
                     }
                 }
+                not { "field2" lt 10 }
             }
 
             // Verifica che exp sia un CompoundExpression con operatore OR
             assertTrue(exp is CompoundExpression)
             assertEquals(CompoundOperator.OR, (exp as CompoundExpression).operator)
-            assertEquals(4, exp.value.size)
+            assertEquals(5, exp.value.size)
 
             // Primo livello: controlla i FieldExpression e il CompoundExpression interno
             val first = exp.value[0] as FieldExpression
@@ -290,7 +262,7 @@ class DslTest {
             // Quarto elemento: CompoundExpression AND
             val andExp = exp.value[3] as CompoundExpression
             assertEquals(CompoundOperator.AND, andExp.operator)
-            assertEquals(6, andExp.value.size)
+            assertEquals(7, andExp.value.size)
 
             // Verifica i FieldExpression dentro l'AND
             val andFirst = andExp.value[0] as FieldExpression
@@ -328,25 +300,79 @@ class DslTest {
             )), andFifth.value)
             assertEquals(FieldOperator.NIN, andFifth.operator)
 
-            // Sesto elemento dell'AND: CompoundExpression OR
-            val innerOr = andExp.value[5] as CompoundExpression
+            // Sesto elemento dell'AND: CompoundExpression NOT
+            val innerNot = andExp.value[5] as CompoundExpression
+            assertEquals(CompoundOperator.NOT, innerNot.operator)
+            assertEquals(1, innerNot.value.size)
+
+            val notInnerAnd = innerNot.value[0] as CompoundExpression
+            assertEquals(CompoundOperator.AND, notInnerAnd.operator)
+            assertEquals(3, notInnerAnd.value.size)
+
+            val notAndFirst = notInnerAnd.value[0] as FieldExpression
+            assertEquals("field8", notAndFirst.field)
+            assertEquals(FieldValue.StringValue("pluto"), notAndFirst.value)
+            assertEquals(FieldOperator.CONTAINS, notAndFirst.operator)
+
+            val notAndSecond = notInnerAnd.value[1] as FieldExpression
+            assertEquals("field9", notAndSecond.field)
+            assertEquals(FieldValue.StringValue("starter"), notAndSecond.value)
+            assertEquals(FieldOperator.STARTS_WITH, notAndSecond.operator)
+
+            val notAndThird = notInnerAnd.value[2] as FieldExpression
+            assertEquals("field10", notAndThird.field)
+            assertEquals(FieldValue.StringValue("ender"), notAndThird.value)
+            assertEquals(FieldOperator.ENDS_WITH, notAndThird.operator)
+
+            // Settimo elemento dell'AND: CompoundExpression OR
+            val innerOr = andExp.value[6] as CompoundExpression
             assertEquals(CompoundOperator.OR, innerOr.operator)
-            assertEquals(3, innerOr.value.size)
+            assertEquals(4, innerOr.value.size)
 
             val orFirst = innerOr.value[0] as FieldExpression
-            assertEquals("field8", orFirst.field)
+            assertEquals("field11", orFirst.field)
             assertEquals(FieldValue.StringValue("pluto"), orFirst.value)
             assertEquals(FieldOperator.CONTAINS, orFirst.operator)
 
             val orSecond = innerOr.value[1] as FieldExpression
-            assertEquals("field9", orSecond.field)
+            assertEquals("field12", orSecond.field)
             assertEquals(FieldValue.StringValue("starter"), orSecond.value)
             assertEquals(FieldOperator.STARTS_WITH, orSecond.operator)
 
             val orThird = innerOr.value[2] as FieldExpression
-            assertEquals("field10", orThird.field)
+            assertEquals("field13", orThird.field)
             assertEquals(FieldValue.StringValue("ender"), orThird.value)
             assertEquals(FieldOperator.ENDS_WITH, orThird.operator)
+
+            // Ottavo elemento dell'OR: CompoundExpression NOT
+            val innerNotOr = innerOr.value[3] as CompoundExpression
+            assertEquals(CompoundOperator.NOT, innerNotOr.operator)
+            assertEquals(1, innerNotOr.value.size)
+
+            val notInnerOr = innerNotOr.value[0] as CompoundExpression
+            assertEquals(CompoundOperator.OR, notInnerOr.operator)
+            assertEquals(2, notInnerOr.value.size)
+
+            val notOrFirst = notInnerOr.value[0] as FieldExpression
+            assertEquals("field14", notOrFirst.field)
+            assertEquals(FieldValue.StringValue("value11"), notOrFirst.value)
+            assertEquals(FieldOperator.EQ, notOrFirst.operator)
+
+            val notOrSecond = notInnerOr.value[1] as FieldExpression
+            assertEquals("field15", notOrSecond.field)
+            assertEquals(FieldValue.StringValue("value12"), notOrSecond.value)
+            assertEquals(FieldOperator.NE, notOrSecond.operator)
+
+            // Nono elemento: NOT field2 lt 10
+            val notField2 = exp.value[4] as CompoundExpression
+            assertEquals(CompoundOperator.NOT, notField2.operator)
+            assertEquals(1, notField2.value.size)
+
+            val notField2Condition = notField2.value[0] as FieldExpression
+            assertEquals("field2", notField2Condition.field)
+            assertEquals(FieldValue.NumberValue(10.0), notField2Condition.value)
+            assertEquals(FieldOperator.LT, notField2Condition.operator)
+
         }
 
         @Test

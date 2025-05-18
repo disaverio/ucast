@@ -14,6 +14,12 @@ fun or(initializer: UcastBuilder.() -> Unit): CompoundExpression =
         UcastBuilder().apply(initializer).conditions
     )
 
+fun not(initializer: UcastBuilder.() -> Unit): CompoundExpression =
+    CompoundExpression(
+        CompoundOperator.NOT,
+        UcastBuilder().apply(initializer).conditions
+    )
+
 infix fun String.eq(value: Any?): FieldExpression =
     FieldExpression(this, FieldOperator.EQ, getFieldValue(value))
 

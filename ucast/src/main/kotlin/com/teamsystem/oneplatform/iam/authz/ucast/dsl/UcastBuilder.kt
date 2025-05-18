@@ -12,6 +12,7 @@ import dev.disaverio.ucast.dsl.lt as _lt
 import dev.disaverio.ucast.dsl.lte as _lte
 import dev.disaverio.ucast.dsl.ne as _ne
 import dev.disaverio.ucast.dsl.nin as _nin
+import dev.disaverio.ucast.dsl.not as _not
 import dev.disaverio.ucast.dsl.or as _or
 import dev.disaverio.ucast.dsl.startsWith as _startsWith
 
@@ -22,6 +23,8 @@ class UcastBuilder() {
     fun and(initializer: UcastBuilder.() -> Unit) { conditions += _and(initializer) }
 
     fun or(initializer: UcastBuilder.() -> Unit) { conditions += _or(initializer) }
+
+    fun not(initializer: UcastBuilder.() -> Unit) { conditions += _not(initializer) }
 
     infix fun String.eq(value: Any?) { conditions += this _eq value }
 

@@ -2,7 +2,7 @@ package dev.disaverio.ucast.extensions
 
 import dev.disaverio.ucast.models.*
 
-object NormalizationUtils {
+internal object NormalizationUtils {
 
     /**
      * Converts a UcastExpression to Disjunctive Normal Form, DNF

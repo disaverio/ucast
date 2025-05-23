@@ -1,0 +1,13 @@
+START := IMPLICIT_AND
+
+EXPRS := IMPLICIT_AND | COMPOUND_EXPR | FIELD_EXPR
+
+IMPLICIT_AND := '{' (FIELD_EXPR | COMPOUND_EXPR)... '}'
+
+FIELD_EXPR := (FIELD_NAME ':' VALUE) | (FIELD_NAME ':' '{' FIELD_OP_NAME ':' VALUE '}')
+FIELD_NAME := <string>
+VALUE := <string> | <number> | ... | {"field": COMPARED_FIELD_NAME}
+COMPARED_FIELD_NAME := <string>
+
+COMPOUND_EXPR := COMPOUND_OP_NAME ':' [EXPRS...]
+COMPOUND_OP_NAME := 'and' | 'or' | 'not'

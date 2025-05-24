@@ -16,7 +16,6 @@ class DslTest {
 
             val exp = "field1" eq "value1"
 
-            assertTrue(exp is FieldExpression)
             assertEquals("field1", exp.field)
             assertEquals(FieldOperator.EQ, exp.operator)
             assertEquals(FieldValue.StringValue("value1"), exp.value)
@@ -27,7 +26,6 @@ class DslTest {
 
             val exp = "field4" ne "value2"
 
-            assertTrue(exp is FieldExpression)
             assertEquals("field4", exp.field)
             assertEquals(FieldOperator.NE, exp.operator)
             assertEquals(FieldValue.StringValue("value2"), exp.value)
@@ -38,7 +36,6 @@ class DslTest {
 
             val exp = "field3" lt 20.5
 
-            assertTrue(exp is FieldExpression)
             assertEquals("field3", exp.field)
             assertEquals(FieldOperator.LT, exp.operator)
             assertEquals(FieldValue.NumberValue(20.5), exp.value)
@@ -49,7 +46,6 @@ class DslTest {
 
             val exp = "field2" lte 15
 
-            assertTrue(exp is FieldExpression)
             assertEquals("field2", exp.field)
             assertEquals(FieldOperator.LTE, exp.operator)
             assertEquals(FieldValue.NumberValue(15.0), exp.value)
@@ -60,7 +56,6 @@ class DslTest {
 
             val exp = "field2" gt 10
 
-            assertTrue(exp is FieldExpression)
             assertEquals("field2", exp.field)
             assertEquals(FieldOperator.GT, exp.operator)
             assertEquals(FieldValue.NumberValue(10.0), exp.value)
@@ -71,7 +66,6 @@ class DslTest {
 
             val exp = "field3" gte 5.5
 
-            assertTrue(exp is FieldExpression)
             assertEquals("field3", exp.field)
             assertEquals(FieldOperator.GTE, exp.operator)
             assertEquals(FieldValue.NumberValue(5.5), exp.value)
@@ -82,7 +76,6 @@ class DslTest {
 
             val exp = "field5" `in` listOf("value3", "value4")
 
-            assertTrue(exp is FieldExpression)
             assertEquals("field5", exp.field)
             assertEquals(FieldOperator.IN, exp.operator)
             assertEquals(FieldValue.ArrayValue(listOf(FieldValue.StringValue("value3"), FieldValue.StringValue("value4"))), exp.value)
@@ -93,7 +86,6 @@ class DslTest {
 
             val exp = "field6" nin listOf("value5", "value6")
 
-            assertTrue(exp is FieldExpression)
             assertEquals("field6", exp.field)
             assertEquals(FieldOperator.NIN, exp.operator)
             assertEquals(FieldValue.ArrayValue(listOf(FieldValue.StringValue("value5"), FieldValue.StringValue("value6"))), exp.value)
@@ -104,7 +96,6 @@ class DslTest {
 
             val exp = "field7" contains "value7"
 
-            assertTrue(exp is FieldExpression)
             assertEquals("field7", exp.field)
             assertEquals(FieldOperator.CONTAINS, exp.operator)
             assertEquals(FieldValue.StringValue("value7"), exp.value)
@@ -115,7 +106,6 @@ class DslTest {
 
             val exp = "field8".startsWith("value8")
 
-            assertTrue(exp is FieldExpression)
             assertEquals("field8", exp.field)
             assertEquals(FieldOperator.STARTS_WITH, exp.operator)
             assertEquals(FieldValue.StringValue("value8"), exp.value)
@@ -126,7 +116,6 @@ class DslTest {
 
             val exp = "field9".endsWith("value9")
 
-            assertTrue(exp is FieldExpression)
             assertEquals("field9", exp.field)
             assertEquals(FieldOperator.ENDS_WITH, exp.operator)
             assertEquals(FieldValue.StringValue("value9"), exp.value)
@@ -238,9 +227,7 @@ class DslTest {
                 not { "field2" lt 10 }
             }
 
-            // Verifica che exp sia un CompoundExpression con operatore OR
-            assertTrue(exp is CompoundExpression)
-            assertEquals(CompoundOperator.OR, (exp as CompoundExpression).operator)
+            assertEquals(CompoundOperator.OR, exp.operator)
             assertEquals(5, exp.value.size)
 
             // Primo livello: controlla i FieldExpression e il CompoundExpression interno
@@ -397,7 +384,6 @@ class DslTest {
             }
 
             // Verifica il tipo e l'operatore principale
-            assertTrue(exp is CompoundExpression)
             assertEquals(CompoundOperator.AND, exp.operator)
             assertEquals(4, exp.value.size)
 
@@ -494,7 +480,6 @@ class DslTest {
             }
 
             // Verifica il tipo e l'operatore principale
-            assertTrue(exp is CompoundExpression)
             assertEquals(CompoundOperator.AND, exp.operator)
             assertEquals(2, exp.value.size)
 
@@ -543,7 +528,6 @@ class DslTest {
             }
 
             // Verifica il tipo e l'operatore principale
-            assertTrue(exp is CompoundExpression)
             assertEquals(CompoundOperator.OR, exp.operator)
             assertEquals(2, exp.value.size)
 
@@ -598,7 +582,6 @@ class DslTest {
             }
 
             // Verifica il tipo e l'operatore principale
-            assertTrue(exp is CompoundExpression)
             assertEquals(CompoundOperator.AND, exp.operator)
             assertEquals(4, exp.value.size)
 

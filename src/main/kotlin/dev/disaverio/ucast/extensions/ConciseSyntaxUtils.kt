@@ -17,7 +17,8 @@ internal object ConciseSyntaxUtils {
                     mapper.createObjectNode().apply {
                         for (expr in expr.value) {
                             getFieldExpression(expr as FieldExpression, mapper)
-                                .fields()
+                                .properties()
+                                .iterator()
                                 .forEachRemaining { (k, v) -> set<JsonNode>(k, v) }
                         }
                     }

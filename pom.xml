@@ -13,8 +13,8 @@
         <kotlin.version>2.1.20</kotlin.version>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
-        <jackson.version>2.16.1</jackson.version>
-        <junitjupiter.version>5.11.4</junitjupiter.version>
+        <jackson.version>2.19.0</jackson.version>
+        <junitjupiter.version>5.12.2</junitjupiter.version>
     </properties>
 
     <dependencies>
@@ -59,13 +59,6 @@
         </dependency>
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>mavenCentral</id>
-            <url>https://repo1.maven.org/maven2/</url>
-        </repository>
-    </repositories>
-
 
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
@@ -82,26 +75,47 @@
                     <execution>
                         <id>compile</id>
                         <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
+                        <goals><goal>compile</goal></goals>
                     </execution>
                     <execution>
                         <id>test-compile</id>
                         <phase>test-compile</phase>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
+                        <goals><goal>test-compile</goal></goals>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.5.3</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.kt</include>
+                    </includes>
+                </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.22.2</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals><goal>jar-no-fork</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.11.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>verify</phase>
+                        <goals><goal>jar</goal></goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

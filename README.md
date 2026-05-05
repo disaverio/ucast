@@ -1,6 +1,7 @@
 # ucast
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Maven Central](https://img.shields.io/maven-central/v/dev.disaverio/ucast.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/dev.disaverio/ucast)
 
 A Kotlin library that models, builds, serializes and normalizes
 [UCAST](https://github.com/stalniy/ucast) boolean expressions — the JSON-based format

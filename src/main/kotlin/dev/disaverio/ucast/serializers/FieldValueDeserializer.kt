@@ -1,31 +1,30 @@
 package dev.disaverio.ucast.serializers
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.databind.node.ArrayNode
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.*
 import dev.disaverio.ucast.models.FieldValue
 
-class FieldValueDeserializer : JsonDeserializer<FieldValue>() {
+class FieldValueDeserializer : ValueDeserializer<FieldValue>() {
 
-    override fun getNullValue(ctx: DeserializationContext?): FieldValue =
+    override fun getNullValue(ctx: DeserializationContext): FieldValue =
         FieldValue.NullValue
 
     override fun deserialize(parser: JsonParser, ctx: DeserializationContext): FieldValue {
-        val node = parser.codec.readTree<JsonNode>(parser)
+        val node = ctx.readTree(parser)
         return when {
             node.isNull -> FieldValue.NullValue
             node.isArray -> FieldValue.ArrayValue(
-                (node as ArrayNode).map { element ->
-                    element.traverse(parser.codec).run {
+                (node as Iterable<JsonNode>).map { element ->
+                    element.traverse(ctx).run {
                         nextToken()
                         deserialize(this, ctx)
                     }
                 }
             )
-            node.isObject -> node.get("field")?.takeIf { it.isTextual }?.let {
-                FieldValue.FieldReference(it.textValue())
+            node.isObject -> node.get("field")?.takeIf { it.isString }?.let {
+                FieldValue.FieldReference(it.stringValue())
             } ?: throw IllegalArgumentException("Unknown object shape for FieldValue: $node")
-            node.isTextual -> FieldValue.StringValue(node.textValue())
+            node.isString -> FieldValue.StringValue(node.stringValue())
             node.isBoolean -> FieldValue.BooleanValue(node.booleanValue())
             node.isNumber -> FieldValue.NumberValue(node.doubleValue())
             else -> throw IllegalArgumentException("Cannot deserialize FieldValue from: $node")

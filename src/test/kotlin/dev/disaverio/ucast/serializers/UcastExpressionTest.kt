@@ -1,6 +1,7 @@
 package dev.disaverio.ucast.serializers
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.databind.json.JsonMapper
 import dev.disaverio.ucast.models.*
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -13,7 +14,7 @@ class UcastExpressionTest {
 
     @BeforeEach
     fun setup() {
-        objectMapper = ObjectMapper()
+        objectMapper = JsonMapper.builder().build()
     }
 
     @Test

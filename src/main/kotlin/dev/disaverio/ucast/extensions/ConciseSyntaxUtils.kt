@@ -1,8 +1,8 @@
 package dev.disaverio.ucast.extensions
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.*
+import tools.jackson.databind.JsonNode
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.databind.node.*
 import dev.disaverio.ucast.models.*
 import dev.disaverio.ucast.models.FieldValue.*
 
@@ -19,7 +19,7 @@ internal object ConciseSyntaxUtils {
                             getFieldExpression(expr as FieldExpression, mapper)
                                 .properties()
                                 .iterator()
-                                .forEachRemaining { (k, v) -> set<JsonNode>(k, v) }
+                                .forEachRemaining { (k, v) -> set(k, v) }
                         }
                     }
                 } else {
@@ -36,7 +36,7 @@ internal object ConciseSyntaxUtils {
                 FieldOperator.EQ -> putPOJO(expr.field, getFieldValue(expr.value, mapper)) // FIELD_NAME ':' VALUE
                 else -> set( // FIELD_NAME ':' '{' FIELD_OP_NAME ':' VALUE '}'
                     expr.field, // FIELD_NAME
-                    mapper.createObjectNode().apply { set<JsonNode>(
+                    mapper.createObjectNode().apply { set(
                         expr.operator.value, // FIELD_OP_NAME
                         getFieldValue(expr.value, mapper) // VALUE
                     ) }
@@ -47,7 +47,7 @@ internal object ConciseSyntaxUtils {
     // named in the grammar definition as COMPOUND_EXPR
     private fun getCompoundExpression(expr: CompoundExpression, mapper: ObjectMapper): ObjectNode =
         mapper.createObjectNode().apply { // COMPOUND_OP_NAME ':' [EXPRS...]
-            set<ArrayNode>(
+            set(
                 expr.operator.value, // COMPOUND_OP_NAME
                 mapper.createArrayNode().apply { addAll(expr.value.map { toConciseJsonNode(it) }) } // [EXPRS...]
             )
@@ -56,7 +56,7 @@ internal object ConciseSyntaxUtils {
     // named in the grammar definition as VALUE
     private fun getFieldValue(value: FieldValue, mapper: ObjectMapper): JsonNode =
         when (value) {
-            is StringValue -> TextNode(value.value)
+            is StringValue -> StringNode(value.value)
             is NumberValue -> DoubleNode(value.value)
             is BooleanValue -> BooleanNode.valueOf(value.value)
             is NullValue -> NullNode.instance

@@ -1,7 +1,8 @@
 package dev.disaverio.ucast.serializers
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.module.SimpleModule
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.databind.module.SimpleModule
 import dev.disaverio.ucast.models.FieldValue
 import org.junit.jupiter.api.*
 
@@ -11,10 +12,9 @@ class FieldValueDeserializerTest {
 
     @BeforeEach
     fun setup() {
-        objectMapper = ObjectMapper()
         val module = SimpleModule()
-        module.addDeserializer(FieldValue::class.java, FieldValueDeserializer())
-        objectMapper.registerModule(module)
+            .addDeserializer(FieldValue::class.java, FieldValueDeserializer())
+        objectMapper = JsonMapper.builder().addModule(module).build()
     }
 
     @Test

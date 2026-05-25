@@ -16,7 +16,26 @@ also adopted in OPA - Open Policy Agent, [see docs](https://www.openpolicyagent.
 
 ## Install
 
+Choose the version that matches the Jackson major version used in your project.
+
+| Your Jackson dependency | `ucast` version to use |
+|------------------------|------------------------|
+| `com.fasterxml.jackson` (Jackson 2.x) | `0.0.0` |
+| `tools.jackson` (Jackson 3.x) | `1.0.0` |
+
 ### Maven
+
+**Jackson 3.x projects (`tools.jackson`)**
+
+```xml
+<dependency>
+    <groupId>dev.disaverio</groupId>
+    <artifactId>ucast</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
+**Jackson 2.x projects (`com.fasterxml.jackson`)**
 
 ```xml
 <dependency>
@@ -28,9 +47,19 @@ also adopted in OPA - Open Policy Agent, [see docs](https://www.openpolicyagent.
 
 ### Gradle (Kotlin DSL)
 
+**Jackson 3.x projects (`tools.jackson`)**
+
 ```kotlin
 dependencies {
-    implementation("dev.disaverio:ucast-lib:0.0.0")
+    implementation("dev.disaverio:ucast:1.0.0")
+}
+```
+
+**Jackson 2.x projects (`com.fasterxml.jackson`)**
+
+```kotlin
+dependencies {
+    implementation("dev.disaverio:ucast:0.0.0")
 }
 ```
 
